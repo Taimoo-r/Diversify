@@ -104,6 +104,35 @@ export default function EnhancedEngineerSocialPlatform() {
     // Combine the initials
     return firstInitial + lastInitial;
   }
+
+  const handleLogout = async () => {
+    try {
+      console.log("logout")
+      // Send request to backend to log out (clearing refreshToken)
+      const response = await fetch('http://localhost:8000/api/v1/users/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${localStorage.getItem('accessToken')}` // Optional: in case needed
+        },
+      });
+  
+      if (response.ok) {
+        // Remove user data from localStorage
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('_id');
+        
+        // Optionally, redirect the user to the login page or home page
+        window.location.href = '/login';
+      } else {
+        // Handle any errors from the server
+        const errorData = await response.json();
+        console.error('Logout failed:', errorData.message);
+      }
+    } catch (error) {
+      console.error('An error occurred during logout:', error);
+    }
+  };
   
 
 
@@ -114,8 +143,8 @@ export default function EnhancedEngineerSocialPlatform() {
         <div className="container flex h-14 items-center">
           <div className="mr-4 hidden md:flex">
             <a className="mr-6 flex items-center space-x-2" href="#">
-              <BookOpen className="h-6 w-6 ml-2" />
-              <span className="hidden font-bold sm:inline-block">EngineerVerse</span>
+              <BookOpen className="h-6 w-6 ml-5" />
+              <span className="hidden  sm:inline-block px-2 font-extrabold ">EngineerVerse</span>
             </a>
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link className="transition-colors hover:text-foreground/80 text-foreground" to="#">Feed</Link>
@@ -164,7 +193,7 @@ export default function EnhancedEngineerSocialPlatform() {
                   </Link>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => { /* Add logout functionality here */ }}>Log out</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {handleLogout() }}>Log out</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </nav>
@@ -172,11 +201,11 @@ export default function EnhancedEngineerSocialPlatform() {
         </div>
       </header>
 
-      <div className="container flex-1 items-start md:grid md:grid-cols-[220px_1fr_220px] md:gap-6 lg:grid-cols-[240px_1fr_300px] lg:gap-10">
+      <div className="container flex-1 items-start md:grid md:grid-cols-[220px_1fr_220px] md:gap-6 lg:grid-cols-[240px_1fr_300px] lg:gap-10 hide-scrollbar">
         {/* Sidebar */}
-        <aside className="fixed top-14 z-30 ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 overflow-y-auto border-r md:sticky md:block">
-          <ScrollArea className="py-6 pr-6 lg:py-8">
-            <div className="flex flex-col space-y-4">
+        <aside className="fixed top-14 z-30 ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 overflow-y-auto border-r md:sticky md:block hide-scrollbar">
+          <ScrollArea className="py-6 pr-6 lg:py-8 hide-scrollbar">
+            <div className="flex flex-col space-y-4 hide-scrollbar">
               <div className="flex flex-col space-y-2">
                 <Button variant="ghost" className="justify-start">
                   <Home className="mr-2 h-4 w-4" />
@@ -209,16 +238,16 @@ export default function EnhancedEngineerSocialPlatform() {
               </div>
               <Separator />
               <div className="flex flex-col space-y-2">
-                <h4 className="font-medium">Personal Dashboard</h4>
-                <div className="text-sm">
-                  <p>Connections: {user?.followers || 0}</p>
-                  <p>Projects: {user?.projects || 0}</p>
+                <h4 className="font-medium px-3">Personal Dashboard</h4>
+                <div className="text-sm px-3">
+                  <p>Connections: {userData?.followers.length || 0}</p>
+                  <p>Projects: {userData?.projects.length || 0}</p>
                   <p>Engagement: {user?.engagement || '0%'}</p>
                 </div>
               </div>
               <Separator />
               <div className="flex flex-col space-y-2">
-                <h4 className="font-medium">Skill Progress</h4>
+                <h4 className="font-medium px-3">Skill Progress</h4>
                 <div className="space-y-2">
                   {user?.skills?.map(skill => (
                     <div key={skill.name} className="flex justify-between text-sm">
@@ -239,7 +268,7 @@ export default function EnhancedEngineerSocialPlatform() {
         <Feed posts={posts} handleLike={handleLike} />
 
         {/* Right Sidebar */}
-        <aside className="fixed top-14 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 overflow-y-auto border-l lg:sticky lg:block">
+        <aside className="fixed top-14 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 overflow-y-auto border-l lg:sticky lg:block hide-scrollbar">
           <ScrollArea className="py-6 pl-6 lg:py-8">
             <div className="space-y-6">
               <div>
@@ -252,10 +281,10 @@ export default function EnhancedEngineerSocialPlatform() {
                 </div>
               </div>
               <div>
-              <div className="container mx-auto p-4 space-y-8 bg-gray-50 max-h-screen">
+              <div className="container mr-28 my-5 p-2 space-y-8 bg-white max-h-80 min-h-60 overflow-scroll border-r-0 rounded hide-scrollbar">
       {/* Popular Engineers Section */}
       <h4 className="mb-2 text-sm font-medium">Popular Engineers</h4>
-      <div className="space-y-2">
+      <div className="space-y-2 ">
         {users.map((user) => (
           <div key={user._id} className="flex items-center cursor-pointer" onClick={() =>  {
             
@@ -323,7 +352,7 @@ export default function EnhancedEngineerSocialPlatform() {
               <Settings className="h-4 w-4" />
               <span className="sr-only">Settings</span>
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => { /* Add logout functionality here */ }}>
+            <Button variant="ghost" size="icon" onClick={() => handleLogout()}>
               <LogOut className="h-4 w-4" />
               <span className="sr-only">Log out</span>
             </Button>

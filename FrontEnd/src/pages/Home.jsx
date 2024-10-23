@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, MessageCircle, Users, FileCode, LogIn } from 'lucide-react'
+import { Search, MessageCircle, Users, FileCode,  Briefcase,Handshake  } from 'lucide-react'
 import LandingPage from '../components/LandingPage'
 import Header from '../components/Header'
 import { Link } from 'react-router-dom'
@@ -36,12 +36,12 @@ export default function App() {
 
 function HomePage() {
   const features = [
-    { icon: LogIn, title: "User Authentication", description: "Secure login and account confirmation" },
-    { icon: FileCode, title: "CRUD Operations", description: "Create, read, update, and delete posts" },
-    { icon: Users, title: "Follow Engineers", description: "Build your professional network" },
-    { icon: MessageCircle, title: "Direct Messaging", description: "Communicate privately with peers" },
-    { icon: Search, title: "Search", description: "Find engineers and projects easily" },
-    { icon: FileCode, title: "Project Collaboration", description: "Work together on exciting projects" },
+    { icon:  Briefcase , title: "Find Jobs", description: "Find your deam jobs and conquer the world." },
+    { icon: Handshake, title: "Join Communities", description: "Become part of vibrant communities and collaborate with peers in your field." },
+    { icon: Users, title: "Follow Engineers", description: "Build your professional network." },
+    { icon: MessageCircle, title: "Direct Messaging", description: "Communicate privately with peers." },
+    { icon: Search, title: "Search", description: "Find engineers and projects easily." },
+    { icon: FileCode, title: "Project Collaboration", description: "Work together on exciting projects." },
   ]
 
   return (
@@ -96,11 +96,11 @@ function HomePage() {
           transition={{ delay: 1.4, duration: 0.5 }}
         >
           <h3 className="text-2xl font-bold mb-4">Ready to get started?</h3>
+          
           <Link to='/sign-up'>
           <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition-colors">
-            Join EngineerVerse Today
-          </button>
-          </Link>
+            Join EngiNet Today
+          </button></Link>
         </motion.section>
       </main>
     </motion.div>

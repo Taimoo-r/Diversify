@@ -9,8 +9,13 @@ import { ThumbsUp, MessageCircle, Share2, X } from "lucide-react"
 import { useUserContext } from '@/userContext'
 import axios from 'axios'
 import { formatDistanceToNow } from 'date-fns';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Component() {
+ 
+  
+  
   const {userData} = useUserContext();
   const [posts, setPosts] = useState([])
 
@@ -76,7 +81,12 @@ export default function Component() {
   
         if (response.ok) {
           // Optionally, you can update the state (e.g., show a success message)
-          alert('Post created successfully!');
+
+          toast.success("Post Created Successfull", {
+            autoClose: 3000,
+          });
+        
+          
   
           // You can add the new post to the feed after a successful response, if desired
           // const newPostFromServer = data.post;
@@ -161,31 +171,10 @@ export default function Component() {
     return () => clearInterval(intervalId);
 }, []);
 
-//   const getAllPostsForFeed = async () => {
-//     try {
-//       const token = localStorage.getItem('accessToken'); // Get the token from local storage or state
-//       const id = localStorage.getItem('_id'); // Get the token from local storage or state
-//         const response = await axios.get(`http://localhost:8000/api/v1/post/feed/${id}`, {
-//             headers: {
-//                 Authorization: `Bearer ${token}` // Include the token in the request
-//             }
-//         });
-//         console.log(response)
-//         setPosts(response.data);
-//     } catch (error) {
-//         console.error('Error fetching posts:', error);
-//         // setError('Error fetching posts'); // Set error message to state
-//     }
-// };
-
-// // Call the function when the component mounts or whenever needed
-// useEffect(() => {
-//     getAllPostsForFeed();
-// }, []);
-
 
   return (
     <main className="flex w-full flex-col overflow-hidden">
+      <ToastContainer/>
       <ScrollArea className="h-[calc(100vh-3.5rem)]">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">

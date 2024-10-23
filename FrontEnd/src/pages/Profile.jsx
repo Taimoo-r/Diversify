@@ -562,7 +562,7 @@ export default function Component() {
     }
   }}
 >
-  View Your Resume
+  {userData?.resume ? "View Your Resume" : "No Resume Yet" }
 </Button>
 
       
