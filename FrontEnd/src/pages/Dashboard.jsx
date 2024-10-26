@@ -92,8 +92,10 @@ export default function EnhancedEngineerSocialPlatform() {
     // Implement additional logic as needed
   };
   function getInitials(fullName) {
+    if(!fullName)
+      return;
     // Split the full name into an array of words
-    const nameParts = fullName.split(' ');
+    const nameParts = fullName?.split(' ');
   
     // Get the first letter of the first name and convert it to uppercase
     const firstInitial = nameParts[0].charAt(0).toUpperCase();
@@ -175,7 +177,7 @@ export default function EnhancedEngineerSocialPlatform() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder.svg?height=32&width=32" alt="@username" />
+                      <AvatarImage src={userData.avatar+"?height=32&width=32"} alt="@username" />
                       <AvatarFallback>{getInitials(userData.fullName)}</AvatarFallback>
                     </Avatar>
                   </Button>
@@ -247,9 +249,9 @@ export default function EnhancedEngineerSocialPlatform() {
               </div>
               <Separator />
               <div className="flex flex-col space-y-2">
-                <h4 className="font-medium px-3">Skill Progress</h4>
+                <h4 className="font-medium px-3">Your Skills</h4>
                 <div className="space-y-2">
-                  {user?.skills?.map(skill => (
+                  {user?.skills.length===0 ? "No Skills Added Yet " :user?.skills?.map(skill => (
                     <div key={skill.name} className="flex justify-between text-sm">
                       <span>{skill.name}</span>
                       <span>{skill.progress}%</span>
@@ -291,8 +293,8 @@ export default function EnhancedEngineerSocialPlatform() {
             console.log(user._id)
             navigate(`/profile/${user._id}`)}}>
             <Avatar className="h-8 w-8 mr-2">
-              <AvatarImage src={user.profilePicture || `/placeholder.svg?height=32&width=32&text=${user.fullName[0]}`} />
-              <AvatarFallback>{user.fullName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              <AvatarImage src={user?.avatar || `/placeholder.svg?height=32&width=32&text=${user.fullName}`} />
+              <AvatarFallback>{user?.fullName?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
             </Avatar>
             <div>
               <p className="text-sm font-medium">{user.fullName}</p>
