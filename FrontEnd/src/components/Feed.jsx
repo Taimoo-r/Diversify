@@ -1,176 +1,161 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Input } from "@/components/ui/input"
-import { ThumbsUp, MessageCircle, Share2, X } from "lucide-react"
-import { useUserContext } from '@/userContext'
-import axios from 'axios'
+import React, { useState, useRef, useEffect } from 'react';
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { ThumbsUp, MessageCircle, Share2, X } from "lucide-react";
+import { useUserContext } from '@/userContext';
+import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Component() {
- 
-  
-  
-  const {userData} = useUserContext();
-  const [posts, setPosts] = useState([])
+    const { userData } = useUserContext();
+    const [posts, setPosts] = useState([]);
+    const [newPost, setNewPost] = useState({ content: '', media: null });
+    const [newComments, setNewComments] = useState({});
+    const fileInputRef = useRef(null);
 
-  const [newPost, setNewPost] = useState({ content: '', media: null })
-  const [newComments, setNewComments] = useState({})
-  const fileInputRef = useRef(null)
+    const handleNewPostChange = (e) => {
+        setNewPost({ ...newPost, content: e.target.value });
+    };
 
-  const handleNewPostChange = (e) => {
-    setNewPost({ ...newPost, content: e.target.value })
-  }
-
-
-  const handleMediaUpload = (e) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const mediaType = file.type.startsWith('image/') ? 'image' : 'video'
-        setNewPost({ 
-          ...newPost, 
-          media: { 
-            type: mediaType, 
-            url: reader.result 
-          } 
-        })
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const handleRemoveMedia = () => {
-    setNewPost({ ...newPost, media: null })
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
-  }
-
-  const handlePost = async () => {
-    if (newPost.content.trim() || newPost.media) {
-      // Prepare the form data to send to the backend
-      const formData = new FormData();
-      formData.append('text', newPost.content);
-      
-      if (newPost.media) {
-        const blob = await fetch(newPost.media.url).then(r => r.blob());
-        console.log(blob)
-        formData.append('file', blob, 'media-file');
-      }
-  
-      try {
-        // Send the post to the backend via the API
-        console.log(userData)
-        const response = await fetch('http://localhost:8000/api/v1/post/create', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'authorization': `Bearer ${localStorage.getItem('accessToken')}`, // Include the user's token if needed
-          },
-        });
-  
-        // Parse the response
-        const data = await response.json();
-  
-        if (response.ok) {
-          // Optionally, you can update the state (e.g., show a success message)
-
-          toast.success("Post Created Successfull", {
-            autoClose: 3000,
-          });
-        
-          
-  
-          // You can add the new post to the feed after a successful response, if desired
-          // const newPostFromServer = data.post;
-          // setPosts([newPostFromServer, ...posts]); // Uncomment if you want to display the post after response
-        } else {
-          throw new Error(data.message || 'Failed to create post');
-        }
-      } catch (error) {
-        console.error('Error creating post:', error);
-        alert('Error creating post');
-      }
-  
-      // Reset the new post state
-      setNewPost({ content: '', media: null });
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
-  
-
-  const handleLike = (postId) => {
-    setPosts(posts.map(post => 
-      post.id === postId
-        ? { ...post, likes: post.isLiked ? post.likes - 1 : post.likes + 1, isLiked: !post.isLiked }
-        : post
-    ))
-  }
-
-  const handleCommentChange = (postId, content) => {
-    setNewComments({ ...newComments, [postId]: content })
-  }
-
-  const handleAddComment = (postId) => {
-    const commentContent = newComments[postId]
-    if (commentContent?.trim()) {
-      setPosts(posts.map(post =>
-        post.id === postId
-          ? {
-              ...post,
-              comments: [
-                ...post.comments,
-                { id: post.comments.length + 1, user: userData.fullName , content: commentContent.trim() }
-              ]
-            }
-          : post
-      ))
-      setNewComments({ ...newComments, [postId]: '' })
-    }
-  }
-
-  const handleShare = (postId) => {
-    console.log(`Sharing post ${postId}`)
-    alert(`Sharing post ${postId}`)
-  }
-  useEffect(() => {
-    const getAllPostsForFeed = async () => {
-        try {
-          const token = localStorage.getItem('accessToken'); // Get the token from local storage or state
-          const id = localStorage.getItem('_id'); // Get the token from local storage or state
-          const response = await axios.get(`http://localhost:8000/api/v1/post/feed/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}` // Add token if needed
-                }
-            });
-            setPosts(response.data); // Update the state with the fetched posts
-        } catch (error) {
-            console.error("Error fetching posts:", error);
+    const handleMediaUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const mediaType = file.type.startsWith('image/') ? 'image' : 'video';
+                setNewPost({
+                    ...newPost,
+                    media: {
+                        type: mediaType,
+                        url: reader.result
+                    }
+                });
+            };
+            reader.readAsDataURL(file);
         }
     };
 
-    // Initial call to fetch posts
-    getAllPostsForFeed();
-    console.log("1")
+    const handleRemoveMedia = () => {
+        setNewPost({ ...newPost, media: null });
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
 
-    // Poll every 10 seconds (10000ms)
-    const intervalId = setInterval(() => {
+    const handlePost = async () => {
+        if (newPost.content.trim() || newPost.media) {
+            const formData = new FormData();
+            formData.append('text', newPost.content);
+
+            if (newPost.media) {
+                const blob = await fetch(newPost.media.url).then(r => r.blob());
+                formData.append('file', blob, 'media-file');
+            }
+
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/post/create', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                    },
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    toast.success("Post Created Successfully", {
+                        autoClose: 3000,
+                    });
+
+                    // Add new post to the top of the existing posts array
+                    setPosts(prevPosts => [data.post, ...prevPosts]);
+
+                } else {
+                    throw new Error(data.message || 'Failed to create post');
+                }
+            } catch (error) {
+                console.error('Error creating post:', error);
+                alert('Error creating post');
+            }
+
+            // Reset the new post state
+            setNewPost({ content: '', media: null });
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
+
+    const handleLike = (postId) => {
+        setPosts(posts.map(post =>
+            post.id === postId
+                ? { ...post, likes: post.isLiked ? post.likes - 1 : post.likes + 1, isLiked: !post.isLiked }
+                : post
+        ));
+    };
+
+    const handleCommentChange = (postId, content) => {
+        setNewComments({ ...newComments, [postId]: content });
+    };
+
+    const handleAddComment = (postId) => {
+        const commentContent = newComments[postId];
+        if (commentContent?.trim()) {
+            setPosts(posts.map(post =>
+                post.id === postId
+                    ? {
+                        ...post,
+                        comments: [
+                            ...post.comments,
+                            { id: post.comments.length + 1, user: userData.fullName, content: commentContent.trim() }
+                        ]
+                    }
+                    : post
+            ));
+            setNewComments({ ...newComments, [postId]: '' });
+        }
+    };
+
+    const handleShare = (postId) => {
+        console.log(`Sharing post ${postId}`);
+        alert(`Sharing post ${postId}`);
+    };
+
+    useEffect(() => {
+        const getAllPostsForFeed = async () => {
+            try {
+                const token = localStorage.getItem('accessToken');
+                const id = localStorage.getItem('_id');
+                const response = await axios.get(`http://localhost:8000/api/v1/post/feed/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                // Ensure the posts are sorted by created time
+                const sortedPosts = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setPosts(sortedPosts);
+            } catch (error) {
+                console.error("Error fetching posts:", error);
+            }
+        };
+
+        // Initial call to fetch posts
         getAllPostsForFeed();
-    }, 50000); // Adjust interval time as needed
 
-    // Clean up the interval on component unmount
-    return () => clearInterval(intervalId);
-}, []);
+        // Poll every 50 seconds
+        const intervalId = setInterval(() => {
+            getAllPostsForFeed();
+        }, 50000);
 
+        return () => clearInterval(intervalId);
+    }, []);
 
   return (
     <main className="flex w-full flex-col overflow-hidden">
@@ -234,9 +219,9 @@ export default function Component() {
                     <Card key={post.id}>
                       <CardHeader>
                         <div className="flex items-center">
-                          <Avatar className="h-8 w-8 mr-2">
-                            <AvatarImage src={`/placeholder.svg?height=32&width=32&text=${post.user[0]}`} />
-                            <AvatarFallback>{post.user[0]}</AvatarFallback>
+                          <Avatar className="h-12 w-12 mr-2">
+                            <AvatarImage src={post?.user?.avatar || `/placeholder.svg?height=32&width=32&text=${post.user.fullName[0]}`} />
+                            <AvatarFallback>{post?.user?.fullName[0]}</AvatarFallback>
                           </Avatar>
                           <div>
                             <CardTitle className="text-sm">{post.user.fullName}</CardTitle>
