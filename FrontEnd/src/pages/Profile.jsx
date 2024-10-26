@@ -6,20 +6,21 @@ import { Progress } from "@/components/ui/progress"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Github, Linkedin, ExternalLink, Mail, Edit2, Save, Plus, Trash2, Upload, Image as ImageIcon, Video, X, Heart, MessageCircle, FileText } from "lucide-react"
+import { Github, Linkedin, ExternalLink, Mail, Edit2, Save, Plus, Trash2, Upload, Image as ImageIcon, Video, X, Heart, MessageCircle, FileText, UploadIcon, AlignHorizontalDistributeCenterIcon } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useUserContext } from '@/userContext'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function Component() {
   const [isEditing, setIsEditing] = useState(false)
+  const [avatarUpload, setAvatarUpload] = useState(null);
   const {userData, setUserData} = useUserContext()
-  const {setIsDataChange} = useUserContext();
-  const [userDetails, setUserDetails] = useState({name : userData.fullName, username: '@'+ userData.username, location: 'Location', title: "Designation", avatar:"/placeholder.svg", resume: null })
   const [data, setData] = useState({
     name: userData.fullName,
-    username: userData.username,
+    username: '@'+userData.username,
     location: "Location",
     title: "Designation",
     profilePicture: "/placeholder.svg",
@@ -48,15 +49,16 @@ export default function Component() {
       website: "https://janedoe.com",
     },
   })
-
+  
+  const [preview, setPreview] = useState(null); // Preview of avatar
   const [newPost, setNewPost] = useState({ type: 'image', content: null, description: '' })
   const [newComment, setNewComment] = useState('')
   const [profileData, setProfileData] = useState({
     name: userData.fullName,
-    username:userData.username,
+    username:'@'+userData.username,
     location: userData.location,
     title: userData.title,
-    profilePicture: "/placeholder.svg"
+    avatar: userData?.avatar || preview
   })
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State for dialog visibility
 
@@ -119,6 +121,7 @@ export default function Component() {
     }
 
     setIsDialogOpen(true)
+    console.log("----->",resumeFile)
     
     // Create a FormData object to send the file
     const formData = new FormData();
@@ -136,17 +139,22 @@ export default function Component() {
       if (response.data.success) {
         console.log("Resume uploaded successfully", response.data.user);
         setUserData(response.data.user); // Update user data in the context or state
+        setIsDialogOpen(false)
         localStorage.setItem('User', JSON.stringify(response.data.user));
-        alert("Resume uploaded successfully.");
+        toast.success("Resume Uploaded Successfully", {
+          autoClose: 3000,
+        });
       } else {
         console.error("Failed to upload resume:", response.data.message);
         alert("Failed to upload resume.");
       }
     } catch (error) {
       console.error("Error uploading resume:", error);
-      alert("Error uploading resume.");
+      toast.error("Oh No!! Try Again, Resume wasn't uploaded suceessfully", {
+        autoClose: 3000,
+      });
     } finally {
-      setIsDialogOpen(true)
+      setIsDialogOpen(false)
       setResumeFile(null); // Clear the file input after upload
     }
   };
@@ -274,206 +282,124 @@ export default function Component() {
 
   const handleSaveProfile = async () => {
     try {
-      // Update profile information
-      console.log("Profile data: ",profileData);
-
-      const profileResponse = await fetch(`http://localhost:8000/api/v1/users/update-profile/${localStorage.getItem('_id')}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        },
-        body: JSON.stringify(profileData)
-      });
-  
-      // Handle profile response
-      if (profileResponse.ok) {
-        const updatedProfile = await profileResponse.json(); // Parse the updated user data from the response
-        console.log("Profile updated successfully", updatedProfile.user);
-  
-        // Update user data in the context or state
-        setUserData(updatedProfile.user);  // Assuming you're using setUser from the context
-        localStorage.setItem('User', JSON.stringify(updatedProfile.user));
-  
-        setIsEditing(false);
-      } else {
-        console.error("Failed to update profile:", profileResponse.status);
-      }
-  
-      // If resume file is selected, upload resume
-      if (resumeFile) {
+        // Update profile information
+        console.log("Profile data: ", profileData);
+        console.log("Avatar : ", preview);
+        
         const formData = new FormData();
-        formData.append('resume', resumeFile);
-  
-        const resumeResponse = await fetch('http://localhost:8000/api/v1/profile/uploadResume', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-          },
-          body: formData
-        });
-  
-        if (resumeResponse.ok) {
-          console.log("Resume uploaded successfully");
+        formData.append('avatar', avatarUpload); // Ensure avatarUpload is a File object
+        formData.append('fullName', profileData.name);
+        formData.append('location', profileData.location);
+        formData.append('title', profileData.title);
+
+        // Await the profile update response
+        const profileResponse = await axios.post(
+            `http://localhost:8000/api/v1/users/update-profile/${localStorage.getItem('_id')}`, 
+            formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            }
+        );
+
+        // Handle profile response
+        if (profileResponse.data.success) {
+            const updatedProfile = profileResponse.data; // The user data is here
+            console.log("Profile updated successfully", updatedProfile.user);
+            setUserData(updatedProfile.user);
+            toast.success("Profile updated successfully");
+
+            // Update user data in the context or state
+            setUserData(updatedProfile.user); // Assuming you're using setUser from the context
+            localStorage.setItem('User', JSON.stringify(updatedProfile.user));
+
+            setIsEditing(false);
         } else {
-          console.error("Failed to upload resume:", resumeResponse.status);
+            console.error("Failed to update profile:", profileResponse.status);
+            toast.error("Failed to update profile");
         }
-      }
+
     } catch (error) {
-      console.error("Error updating profile or uploading resume:", error);
+        console.error("Error updating profile: ", error.response?.data || error.message);
+        toast.error("Failed to update profile");
     }
-  };
+};
+
   
   // Fetch posts on component mount
   useEffect(() => {
     getUserPosts()
   }, [])
-  // const handleResumeUploadonBackend = async (e) => {
-  //   e.preventDefault(); // Prevent default form submission if this is in a form
   
-  //   const formData = new FormData();
-  //   formData.append('resume', resumeFile); // Append the resume file
+  // const handleAvatarChange = async (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     try {
+  //       const formData = new FormData();
+  //       formData.append("avatar", file);
   
-  //   const profileResponse = await fetch(`http://localhost:8000/api/v1/users/update-profile/${localStorage.getItem('_id')}`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-  //       // Note: Do NOT set Content-Type header here. It will be automatically set by the browser to include boundaries for FormData.
-  //     },
-  //     body: formData // Use FormData as the body
-  //   });
-  
-  //   // Handle profile response
-  //   if (profileResponse.ok) {
-  //     const updatedProfile = await profileResponse.json(); // Parse the updated user data from the response
-  //     console.log("Profile updated successfully", updatedProfile.user);
-  
-  //     // Update user data in the context or state
-  //     setUserData(updatedProfile.user);  // Assuming you're using setUser from the context
-  //     localStorage.setItem('User', JSON.stringify(updatedProfile.user));
-  
-  //     setIsEditing(false);
-  //   } else {
-  //     console.error("Failed to update profile:", profileResponse.status);
+  //       const response = await fetch("http://localhost:8000/api/v1/users/upload-avatar", {
+  //         method: "POST",
+  //         body: formData,
+  //       });
+        
+  //       const data = await response.json();
+  //       if (response.ok) {
+  //         // Update the profile data with the new avatar URL
+  //         setProfileData(prev => ({ ...prev, profilePicture: data.avatarUrl }));
+  //       } else {
+  //         console.error("Failed to upload avatar:", data.message);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error uploading avatar:", error);
+  //     }
   //   }
   // };
+
+  const handleAvatarChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      
+      setPreview(URL.createObjectURL(file)); // Preview the image
+      setAvatarUpload(file);
+    }
+    else{
+      console.log("No file")
+    }
+  };
+  
   
 
   return (
     <div className="container mx-auto p-4 space-y-8 bg-gray-50 min-h-screen">
-      
-      {/* Profile Header
-      <Card className="w-full">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-            <div className="relative">
-              <Avatar className="w-32 h-32">
-                <AvatarImage src={data.profilePicture} alt={data.name} />
-                <AvatarFallback>{data.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-              </Avatar>
-              {isEditing && (
-                <div className="absolute bottom-0 right-0">
-                  <label htmlFor="profile-picture" className="cursor-pointer">
-                    <div className="bg-primary text-primary-foreground rounded-full p-2">
-                      <Upload className="w-4 h-4" />
-                    </div>
-                  </label>
-                  <input
-                    id="profile-picture"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleProfilePictureChange}
-                  />
-                </div>
-              )}
-            </div>
-            <div className="flex-grow space-y-2 text-center md:text-left">
-              {isEditing ? (
-                <Input
-                  value={data.name}
-                  onChange={(e) => handleInputChange(e, 'name')}
-                  className="text-2xl font-bold"
-                />
-              ) : (
-                <h1 className="text-3xl font-bold">{data.name}</h1>
-              )}
-              {isEditing ? (
-                <Input
-                  value={data.title}
-                  onChange={(e) => handleInputChange(e, 'title')}
-                  className="text-lg"
-                />
-              ) : (
-                <p className="text-xl text-muted-foreground">{data.title}</p>
-              )}
-              {isEditing ? (
-                <Input
-                  value={data.location}
-                  onChange={(e) => handleInputChange(e, 'location')}
-                  className="text-sm"
-                />
-              ) : (
-                <p className="text-sm text-muted-foreground">{data.location}</p>
-              )}
-              <p className="text-sm text-muted-foreground">{data.username}</p>
-            </div>
-            <div className="md:ml-auto space-y-2">
-              {isEditing ? (
-                <Button onClick={handleSave}>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save
-                </Button>
-              ) : (
-                <Button variant="outline" onClick={() => setIsEditing(true)}>
-                  <Edit2 className="mr-2 h-4 w-4" />
-                  Edit Profile
-                </Button>
-              )}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full">
-                    <FileText className="mr-2 h-4 w-4" />
-                    {data.resume ? "Update Resume" : "Upload Resume"}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Upload Resume</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <label htmlFor="resume-upload" className="block text-sm font-medium text-gray-700 mb-2">
-                        Upload from Computer
-                      </label>
-                      <Input
-                        id="resume-upload"
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={handleResumeUpload}
-                      />
-                    </div>
-                    <div>
-                      <Button onClick={handleGoogleDriveUpload} className="w-full">
-                        <img src="/google-drive-icon.png" alt="Google Drive" className="w-5 h-5 mr-2" />
-                        Upload from Google Drive
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-        </CardContent>
-      </Card> */}
+      <ToastContainer/>
+        
         <div className="w-full">
       <div className="p-6 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
         <div className="relative">
-          <Avatar className="w-32 h-32">
-            <AvatarImage src={profileData.profilePicture} alt={profileData.name} />
-            <AvatarFallback>{profileData.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-          </Avatar>
-        </div>
+  <Avatar className="w-32 h-32">
+    <AvatarImage src={isEditing ? preview || userData.avatar : userData.avatar} alt={profileData.name} />
+    <AvatarFallback>{profileData.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+  </Avatar>
+  {isEditing && (
+    <>
+      <input 
+        id="avatar-upload" 
+        type="file" 
+        accept="image/*" 
+        className="hidden" 
+        onChange={(e) => handleAvatarChange(e)} 
+      />
+      <label htmlFor="avatar-upload" className="absolute bottom-0 right-0" onClick={() => document.getElementById('avatar-upload').click()}>
+        <Button variant="outline" className="w-8 h-8 rounded-full bg-white">
+          <UploadIcon className="w-4 h-4" />
+        </Button>
+      </label>
+    </>
+  )}
+</div>
+
         <div className="flex-grow space-y-2 text-center md:text-left">
           {isEditing ? (
             <>
@@ -520,7 +446,7 @@ export default function Component() {
           )}
                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full" onClick={() => setIsDialogOpen(true)}>
+        <Button variant="outline" className="w-full" onClick={() => setIsDialogOpen()}>
           <FileText className="mr-2 h-4 w-4" />
           {userData.resume ? "Update Resume" : "Upload Resume"}
         </Button>
@@ -543,7 +469,7 @@ export default function Component() {
           </div>
           <div>
             <Button onClick={handleResumeUpload} className="w-full">
-              <img src="/google-drive-icon.png" alt="Google Drive" className="w-5 h-5 mr-2" />
+              <img src="https://w7.pngwing.com/pngs/733/160/png-transparent-computer-icons-upload-youtube-icon-upload-miscellaneous-photography-sign-thumbnail.png" alt="Google Drive" className="w-5 h-5 mr-2" />
               Upload
             </Button>
           </div>
