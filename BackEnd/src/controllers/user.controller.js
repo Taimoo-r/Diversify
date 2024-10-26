@@ -105,24 +105,6 @@ export const registerUser = async (req, res) => {
             const { refreshToken, accessToken } = await generateAccessAndRefreshToken(user._id);
             console.log(accessToken)
             const loggedUser = await User.findById(user._id).select("-password -refreshToken");
-    
-            // Store refresh token in cookies
-            // res.cookie('refreshToken', refreshToken, {
-            //     httpOnly: true,
-            //     secure: true,
-            //     sameSite: 'None',
-            //     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-            // });
-            // res.cookie('accessToken', accessToken, {
-            //     httpOnly: true,
-            //     secure: true,
-            //     sameSite: 'None',
-            //     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-            // });
-    
-            // Optionally save the refresh token in the database
-            // user.refreshToken = refreshToken;
-            // await user.save();
             console.log("User Login Successful")
             // Respond with the access token
             const options = {
@@ -215,19 +197,20 @@ export const changePassword = async (req, res) => {
 }
 
 
-export const updateProfileOrResume = async (req, res, next) => {88
+export const updateProfile = async (req, res, next) => {
     try {
+        console.log('Request file:', req.file);
         console.log('Request body:', req.body);
 
-        // const { username, fullName, skills, experience, education, projects } = req.body;
-        const {location, title} = req.body
-        let resumeUrl;
+        const { location, title, fullName } = req.body;
+        let avatarUrl;
 
-        // If a resume file is present, upload to Cloudinary
+        // If an avatar file is present, upload to Cloudinary
         if (req.file && req.file.path) {
             try {
-                const cloudinaryResponse = await uploadOnCloudinary(req.file.path, 'resumes');
-                resumeUrl = cloudinaryResponse.secure_url;
+                const cloudinaryResponse = await uploadOnCloudinary(req.file.path, 'avatar');
+                avatarUrl = cloudinaryResponse.secure_url;
+                console.log('Uploaded avatar URL:', avatarUrl);
             } catch (error) {
                 return res.status(500).json({
                     success: false,
@@ -236,21 +219,11 @@ export const updateProfileOrResume = async (req, res, next) => {88
             }
         }
 
-        // Create update object to conditionally add fields
         const updateFields = {};
-
-        // Check if other fields are present in the body
-        // if (username) updateFields.username = username;
-        // if (fullName) updateFields.fullName = fullName;
-        // if (skills) updateFields.skills = skills;
-        // if (experience) updateFields.experience = experience;
-        // if (education) updateFields.education = education;
-        // if (projects) updateFields.projects = projects;
-        if(location) updateFields.location = location
-        if(title) updateFields.title = title
-        
-        // If resumeUrl exists, add it to updateFields
-        if (resumeUrl) updateFields.resume = resumeUrl;
+        if (fullName) updateFields.fullName = fullName;
+        if (location) updateFields.location = location;
+        if (title) updateFields.title = title;
+        if (avatarUrl) updateFields.avatar = avatarUrl;
 
         // If there are no fields to update, return an error
         if (Object.keys(updateFields).length === 0) {
@@ -260,19 +233,22 @@ export const updateProfileOrResume = async (req, res, next) => {88
             });
         }
 
-        // Update the user's profile
-        const updatedUser = await User.findByIdAndUpdate(
-            req.params.id, // Ensure req.user._id is correctly set by authentication middleware
-            { $set: updateFields },
-            { new: true, runValidators: true, upsert: true  }
-        );
-
-        if (!updatedUser) {
+        // Fetch user to ensure it exists before updating
+        const userToUpdate = await User.findById(req.params.id);
+        if (!userToUpdate) {
+            console.log('User not found with id:', req.params.id);
             return res.status(404).json({
                 success: false,
                 message: 'User not found!',
             });
         }
+
+        // Update the user's profile
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
 
         // Success response
         return res.status(200).json({
@@ -282,10 +258,11 @@ export const updateProfileOrResume = async (req, res, next) => {88
         });
 
     } catch (error) {
-        // Error handling middleware
-        return next(error); // Passing the error to the global error handler
+        console.error('Error in updateProfile:', error);
+        return next(error);
     }
 };
+
 
 
     export const viewProfile = async(req, res, next) => {
@@ -363,7 +340,7 @@ export const updateProfileOrResume = async (req, res, next) => {88
       };
       export const getAllUsers = async (req, res) => {
         try {
-          const users = await User.find().select('fullName title profilePicture'); // Adjust fields as necessary
+          const users = await User.find().select('fullName title avatar'); // Adjust fields as necessary
           res.status(200).json({ success: true, users });
         } catch (error) {
           console.error(error);
