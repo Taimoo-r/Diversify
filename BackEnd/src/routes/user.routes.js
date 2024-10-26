@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loginUser, registerUser, refreshAccessToken, logoutUser,updateProfileOrResume , viewProfile, GetCurrentUser, uploadResume, getAllUsers } from '../controllers/user.controller.js';
+import { loginUser, registerUser, refreshAccessToken, logoutUser,updateProfile , viewProfile, GetCurrentUser, uploadResume, getAllUsers } from '../controllers/user.controller.js';
 import { verifyJWT } from '../middleware/auth.middleware.js'; // Middleware to protect routes
 import { upload } from '../middleware/multer.middleware.js'; // Middleware for file uploads (e.g., avatars)
 
@@ -19,13 +19,14 @@ router.post('/logout', verifyJWT, logoutUser);
 
 // Profile Update
 
-router.post('/update-profile/:id', updateProfileOrResume )
+router.post('/update-profile/:id',upload.single('avatar'), updateProfile )
 
 // View Profile
 router.get('/profile/:id', viewProfile)
 
 router.get('/dashboard/:id', GetCurrentUser)
 router.post('/upload-resume/:id', upload.single('resume'), uploadResume);
+router.post('/upload-avatar/:id', upload.single('resume'), uploadResume);
 router.get('/all-users',getAllUsers);
 router.get('/:id', GetCurrentUser);
 
