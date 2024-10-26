@@ -97,7 +97,7 @@ const userSchema = new Schema(
         ],
         location: {
             type: String,
-            default: "Unknown",
+            default: "location",
             trim: true
         },
         title: {
