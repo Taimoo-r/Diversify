@@ -103,7 +103,7 @@ export const getUserPosts = async (req, res, next) => {
     // Get all posts
 export const getAllPosts = async (req, res, next) => {
     try {
-        const posts = await Post.find().populate('user','username fullName');
+        const posts = await Post.find().populate('user','username fullName avatar');
         console.log(posts)
         res.status(200).json(posts);
     } catch (error) {
