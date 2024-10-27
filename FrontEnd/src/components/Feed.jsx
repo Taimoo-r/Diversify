@@ -59,7 +59,7 @@ export default function Component() {
             }
 
             try {
-                const response = await fetch('http://localhost:8000/api/v1/post/create', {
+                const response = await fetch('https://engineers-verse-back.vercel.app/api/v1/post/create', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -133,7 +133,7 @@ export default function Component() {
             try {
                 const token = localStorage.getItem('accessToken');
                 const id = localStorage.getItem('_id');
-                const response = await axios.get(`http://localhost:8000/api/v1/post/feed/${id}`, {
+                const response = await axios.get(`https://engineers-verse-back.vercel.app/api/v1/post/feed/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
