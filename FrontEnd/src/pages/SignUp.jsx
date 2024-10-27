@@ -24,7 +24,7 @@ export default function SignUp() {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/users/register', {
+      const response = await axios.post('https://engineers-verse-back.vercel.app/api/v1/users/register', {
         username,
         fullName,
         email,
