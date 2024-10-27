@@ -62,7 +62,7 @@ export default function Component() {
       // Make a GET request to the backend route to fetch the current user
       
       setLoading(true)
-      const response = await fetch(`http://localhost:8000/api/v1/users/profile/${userId}`, {
+      const response = await fetch(`https://engineers-verse-back.vercel.app/api/v1/users/profile/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export default function Component() {
     try{
         console.log("atFetchPosts")
       const token = localStorage.getItem('accessToken') // assuming token is store
-      const response = await fetch(`http://localhost:8000/api/v1/post/${userId}`, {
+      const response = await fetch(`https://engineers-verse-back.vercel.app/api/v1/post/${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,  // Include JWT token for authentication
