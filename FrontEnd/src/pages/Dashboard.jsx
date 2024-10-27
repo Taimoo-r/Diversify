@@ -43,7 +43,7 @@ export default function EnhancedEngineerSocialPlatform() {
         }
 
         const userId = localStorage.getItem('_id');
-        const userResponse = await axios.get(`http://localhost:8000/api/v1/users/dashboard/${userId}`, {
+        const userResponse = await axios.get(`https://engineers-verse-back.vercel.app/api/v1/users/dashboard/${userId}`, {
           headers: { Authorization: `Bearer ${refreshToken}` },
         });
 
@@ -70,7 +70,7 @@ export default function EnhancedEngineerSocialPlatform() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/users/all-users');
+        const response = await fetch('https://engineers-verse-back.vercel.app/api/v1/users/all-users');
         const result = await response.json();
         setUsers(result.users);
       } catch (error) {
@@ -111,7 +111,7 @@ export default function EnhancedEngineerSocialPlatform() {
     try {
       console.log("logout")
       // Send request to backend to log out (clearing refreshToken)
-      const response = await fetch('http://localhost:8000/api/v1/users/logout', {
+      const response = await fetch('https://engineers-verse-back.vercel.app/api/v1/users/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
