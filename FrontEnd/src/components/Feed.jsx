@@ -59,6 +59,7 @@ export default function Component() {
             }
 
             try {
+                console.log('During Post, Access Token is : ', localStorage.getItem('accessToken'));
                 const response = await fetch('https://engineers-verse-back.vercel.app/api/v1/post/create', {
                     method: 'POST',
                     body: formData,
