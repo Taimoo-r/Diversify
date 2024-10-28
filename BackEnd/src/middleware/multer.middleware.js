@@ -1,19 +1,26 @@
+// Import necessary modules
 import multer from 'multer';
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/resumes'); // Destination for uploaded files
+// Configure Cloudinary (keep this as-is)
+cloudinary.config({ 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_API_SECRET 
+});
+
+// Configure Cloudinary storage for Multer (replace diskStorage with CloudinaryStorage)
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'uploads/resumes', // Specify the folder name in Cloudinary
+        resource_type: 'auto',     // Automatically detect file type
+        public_id: (req, file) => file.fieldname + '-' + Date.now(), // Unique filename generation
     },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
 });
 
-export const upload = multer({
-    storage: storage,
-    fileFilter: function (req, file, cb) {
-        // Accept all file formats
-        cb(null, true);
-    }
-});
+// Update Multer to use Cloudinary storage
+const upload = multer({ storage });
+
+export { upload };
