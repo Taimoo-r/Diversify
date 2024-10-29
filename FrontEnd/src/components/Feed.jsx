@@ -221,11 +221,11 @@ export default function Component() {
                       <CardHeader>
                         <div className="flex items-center">
                           <Avatar className="h-12 w-12 mr-2">
-                            <AvatarImage src={post?.user?.avatar || `/placeholder.svg?height=32&width=32&text=${post.user.fullName[0]}`} />
-                            <AvatarFallback>{post?.user?.fullName[0]}</AvatarFallback>
+                            <AvatarImage src={post?.user?.avatar || `/placeholder.svg?height=32&width=32&text=${post?.user?.fullName}`} />
+                            <AvatarFallback>{post?.user?.fullName}</AvatarFallback>
                           </Avatar>
                           <div>
-                            <CardTitle className="text-sm">{post.user.fullName}</CardTitle>
+                            <CardTitle className="text-sm">{post?.user?.fullName}</CardTitle>
                             <p className="text-xs text-muted-foreground">Posted {formatDistanceToNow(new Date(post.createdAt))} ago</p>
                           </div>
                         </div>
@@ -244,10 +244,10 @@ export default function Component() {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => handleLike(post.id)}
-                            className={post.isLiked ? "text-purple-500" : ""}
+                            className={post?.isLiked ? "text-purple-500" : ""}
                           >
                             <ThumbsUp className="mr-2 h-4 w-4" />
-                            {post.likes.length}
+                            {post?.likes.length}
                           </Button>
                           <Button variant="ghost" size="sm">
                             <MessageCircle className="mr-2 h-4 w-4" />
