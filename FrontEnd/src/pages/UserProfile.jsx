@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Github, Linkedin, ExternalLink, Mail, FileText, UserPlus, Users } from "lucide-react"
+import { Github, Linkedin, ExternalLink, Mail, FileText, UserPlus, Users, Heart, Trash2 } from "lucide-react"
 import Loader from './Loader'
 import { useUserContext } from '@/userContext'
 import { useParams } from 'react-router-dom'
@@ -283,7 +283,7 @@ export default function Component() {
                   <Button
                     variant="ghost"
                     onClick={() => handleLikePost(post._id)}
-                    className={post.isLiked ? "text-red-500" : ""}
+                    className={post?.isLiked ? "text-red-500" : ""}
                   >
                     <Heart className={`mr-1 h-4 w-4 ${post.isLiked ? "fill-current" : ""}`} />
                     {post.likes}
