@@ -216,8 +216,8 @@ export default function Component() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {posts.map((post) => (
-                    <Card key={post.id}>
+                  {posts?.map((post) => (
+                    <Card key={post?.id}>
                       <CardHeader>
                         <div className="flex items-center">
                           <Avatar className="h-12 w-12 mr-2">
