@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { ThumbsUp, MessageCircle, Share2, X } from "lucide-react";
+import { ThumbsUp, MessageCircle, Share2, X, MoreVertical, UserPlus, UserMinus, Bell, Bookmark, AlertTriangle, AlertOctagonIcon } from "lucide-react";
 import { useUserContext } from '@/userContext';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from '@radix-ui/react-dropdown-menu';
 
 export default function Component() {
     const { userData } = useUserContext();
@@ -59,7 +60,6 @@ export default function Component() {
             }
 
             try {
-                console.log('During Post, Access Token is : ', localStorage.getItem('accessToken'));
                 const response = await fetch('https://engineers-verse-back.vercel.app/api/v1/post/create', {
                     method: 'POST',
                     body: formData,
@@ -69,6 +69,7 @@ export default function Component() {
                 });
 
                 const data = await response.json();
+                console.log(data.post)
 
                 if (response.ok) {
                     toast.success("Post Created Successfully", {
@@ -82,8 +83,10 @@ export default function Component() {
                     throw new Error(data.message || 'Failed to create post');
                 }
             } catch (error) {
-                console.error('Error creating post:', error);
-                alert('Error creating post');
+                toast.error("Error creating post", {
+                  autoClose: 3000,
+              });
+                
             }
 
             // Reset the new post state
@@ -134,7 +137,7 @@ export default function Component() {
             try {
                 const token = localStorage.getItem('accessToken');
                 const id = localStorage.getItem('_id');
-                const response = await axios.get(`https://engineers-verse-back.vercel.app/api/v1/post/feed/${id}`, {
+                const response = await axios.get(`http://localhost:8000/api/v1/post/feed/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -150,17 +153,48 @@ export default function Component() {
         // Initial call to fetch posts
         getAllPostsForFeed();
 
-        // Poll every 50 seconds
+        // Poll every 5 seconds
         const intervalId = setInterval(() => {
             getAllPostsForFeed();
-        }, 50000);
+        }, 5000);
 
         return () => clearInterval(intervalId);
     }, []);
 
+    
+      const [isModalOpen, setModalOpen] = useState(false);
+      const [modalImageSrc, setModalImageSrc] = useState(null)
+      const [zoomLevel, setZoomLevel] = useState(1);
+
+
+    
+      const handleImageClick = () => {
+        setModalOpen(true);
+      }
+    
+      const closeModal = () => {
+        setModalOpen(false);
+        setZoomLevel(1);
+      };
+      
+      const zoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.2, 3)); // Max zoom level is 3x
+      const zoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.2, 0.5)); // Min zoom level is 0.5x
   return (
     <main className="flex w-full flex-col overflow-hidden">
       <ToastContainer/>
+      {/* Modal for Image */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
+          <div className="relative p-4">
+            {/* Close Button */}
+            <Button onClick={closeModal} className="absolute top-5 p-1 justify-center self-center items-center  text-red-800 right-8 hover:bg-white hover:rounded  text-4xl font-bold">
+              &times;
+            </Button>
+            {/* Large Image */}
+            <img src={modalImageSrc} /*style={{ transform: `scale(${zoomLevel})` }} */alt="Expanded content" className="rounded-lg max-h-[90vh] w-auto object-contain" />
+          </div>
+        </div>
+      )}
       <ScrollArea className="h-[calc(100vh-3.5rem)]">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
@@ -216,17 +250,52 @@ export default function Component() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {posts?.map((post) => (
-                    <Card key={post?.id}>
+                  {posts.map((post) => (
+                    <Card key={post.id}>
                       <CardHeader>
+                        <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <Avatar className="h-12 w-12 mr-2">
                             <AvatarImage src={post?.user?.avatar || `/placeholder.svg?height=32&width=32&text=${post?.user?.fullName}`} />
-                            <AvatarFallback>{post?.user?.fullName}</AvatarFallback>
+                            <AvatarFallback>{post?.user?.fullName[0]}</AvatarFallback>
                           </Avatar>
+                        <div>
+                          <CardTitle className="text-sm">{post.user.fullName}</CardTitle>
+                          <p className="text-xs text-muted-foreground">Posted {formatDistanceToNow(new Date(post.createdAt))} ago</p>
+                        </div>
+                          </div>
                           <div>
-                            <CardTitle className="text-sm">{post?.user?.fullName}</CardTitle>
-                            <p className="text-xs text-muted-foreground">Posted {formatDistanceToNow(new Date(post.createdAt))} ago</p>
+                          <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreVertical className="h-5 w-5" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              
+                              {/* Dropdown Content */}
+                              <DropdownMenuContent align="end" className=" p-3 bg-white shadow-md rounded-md">
+                                <DropdownMenuItem className="flex items-center gap-2 m-2 space-x-2">
+                                  <UserPlus className="h-4 w-4 text-blue-400" />
+                                  <span className='text-blue-400'>Follow</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center space-x-2 gap-2 m-2 text-red-500">
+                                  <UserMinus className="h-4 w-4" />
+                                  <span>UnFollow</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center space-x-2 gap-2 m-2">
+                                  <Bell className="h-4 w-4" />
+                                  <span>Mute notifications</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center space-x-2 gap-2 m-2">
+                                  <Bookmark className="h-4 w-4" />
+                                  <span>Save post</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center space-x-2 gap-2 m-2">
+                                  <AlertOctagonIcon className="h-4 w-4 text-yellow-600" />
+                                  <span className='text-yellow-600'>Report post</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                         </div>
                       </CardHeader>
@@ -234,7 +303,9 @@ export default function Component() {
                         <p>{post.text}</p>
                         {post.file && (
                           
-                            <img src={post.file} alt="Post content" className="mt-4 rounded-lg max-h-96 w-full object-cover" />
+                            <img src={post.file} alt="Post content" className="mt-4 rounded  max-h-96 w-full object-contain cursor-pointer" onClick={() =>{
+                              setModalImageSrc(post.file)
+                              handleImageClick()}}/>
                           // ) : (
                           //   <video src={post.media.url} controls className="mt-4 rounded-lg max-h-96 w-full" />
                           // )
@@ -244,10 +315,10 @@ export default function Component() {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => handleLike(post.id)}
-                            className={post?.isLiked ? "text-purple-500" : ""}
+                            className={post.isLiked ? "text-purple-500" : ""}
                           >
                             <ThumbsUp className="mr-2 h-4 w-4" />
-                            {post?.likes.length}
+                            {post.likes.length}
                           </Button>
                           <Button variant="ghost" size="sm">
                             <MessageCircle className="mr-2 h-4 w-4" />
