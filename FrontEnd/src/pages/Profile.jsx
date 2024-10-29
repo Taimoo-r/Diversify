@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Github, Linkedin, ExternalLink, Mail, Edit2, Save, Plus, Trash2, Upload, Image as ImageIcon, Video, X, Heart, MessageCircle, FileText, UploadIcon, AlignHorizontalDistributeCenterIcon } from "lucide-react"
+import { Github, Linkedin, ExternalLink, Mail, Edit2, Save, Plus, Trash2, Upload, Image as ImageIcon, Video, X, Heart, MessageCircle, FileText, UploadIcon, AlignHorizontalDistributeCenterIcon, Delete } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useUserContext } from '@/userContext'
 import axios from 'axios'
@@ -128,7 +128,7 @@ export default function Component() {
     formData.append('resume', resumeFile);
 
     try {
-      const response = await axios.post(`https://engineers-verse-back.vercel.app/api/v1/users/upload-resume/${localStorage.getItem('_id')}`, formData, {
+      const response = await axios.post(`http://localhost:8000/api/v1/users/upload-resume/${localStorage.getItem('_id')}`, formData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'multipart/form-data', // Ensure you set the correct content type
@@ -190,7 +190,7 @@ export default function Component() {
 
   const handleDeletePost = async (postId) => {
     try {
-      const response = await fetch(`https://engineers-verse-back.vercel.app/api/v1/post/${postId}`, {
+      const response = await fetch(`http://localhost:8000/api/v1/post/${postId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -247,7 +247,7 @@ export default function Component() {
       const userId = localStorage.getItem('_id')
       const token = localStorage.getItem('accessToken') // assuming token is stored
       setAccessToken(token)
-      const response = await fetch(`https://engineers-verse-back.vercel.app/api/v1/post/${userId}`, {
+      const response = await fetch(`http://localhost:8000/api/v1/post/${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,  // Include JWT token for authentication
@@ -294,7 +294,7 @@ export default function Component() {
 
         // Await the profile update response
         const profileResponse = await axios.post(
-            `https://engineers-verse-back.vercel.app/api/v1/users/update-profile/${localStorage.getItem('_id')}`, 
+            `http://localhost:8000/api/v1/users/update-profile/${localStorage.getItem('_id')}`, 
             formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -332,30 +332,7 @@ export default function Component() {
     getUserPosts()
   }, [])
   
-  // const handleAvatarChange = async (event) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     try {
-  //       const formData = new FormData();
-  //       formData.append("avatar", file);
   
-  //       const response = await fetch("https://engineers-verse-back.vercel.app/api/v1/users/upload-avatar", {
-  //         method: "POST",
-  //         body: formData,
-  //       });
-        
-  //       const data = await response.json();
-  //       if (response.ok) {
-  //         // Update the profile data with the new avatar URL
-  //         setProfileData(prev => ({ ...prev, profilePicture: data.avatarUrl }));
-  //       } else {
-  //         console.error("Failed to upload avatar:", data.message);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error uploading avatar:", error);
-  //     }
-  //   }
-  // };
 
   const handleAvatarChange = (event) => {
     const file = event.target.files[0];
@@ -366,6 +343,36 @@ export default function Component() {
     }
     else{
       console.log("No file")
+    }
+  };
+
+  const removeAvatar = async () => {
+    try {
+      console.log("do")
+      const response = await fetch(`http://localhost:8001/api/v1/users/remove-avatar/${localStorage.getItem('_id')}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        toast.error("Failed to remove avatar");
+        throw new Error('Failed to remove avatar');
+      }
+
+      // Update the UI after successfully removing the avatar
+      
+
+      await setUserData((prevData) => ({
+        ...prevData,
+        avatar: "",  // Set avatar to an empty string or a default image path
+      }));
+      toast.success("Avatar removed successfully");
+      
+    } catch (error) {
+      console.error("Error removing avatar:", error);
+      // Optional: Show an error message to the user
     }
   };
   
@@ -391,11 +398,15 @@ export default function Component() {
         className="hidden" 
         onChange={(e) => handleAvatarChange(e)} 
       />
-      <label htmlFor="avatar-upload" className="absolute bottom-0 right-0" onClick={() => document.getElementById('avatar-upload').click()}>
-        <Button variant="outline" className="w-8 h-8 rounded-full bg-white">
+      <label htmlFor="avatar-upload" className="absolute bottom-0 right-0" >
+        <Button variant="outline" className="w-8 h-8 rounded-full bg-white text-purple-500 font-extrabold" onClick={() => document.getElementById('avatar-upload').click()}>
           <UploadIcon className="w-4 h-4" />
         </Button>
       </label>
+        <label  className="absolute bottom-0 left-0" ></label>
+        <Button variant="outline" className="w-8 h-8 rounded-full bottom-0 left-0 absolute bg-red text-red-900" onClick={() => removeAvatar()}>
+          <Delete className="w-4 h-4"/>
+        </Button>
     </>
   )}
 </div>
@@ -602,44 +613,46 @@ export default function Component() {
               ))}
             </TabsContent>
             <TabsContent value="posts" className="space-y-4">
-              {loadingPosts ? (
-                <p>Loading...</p>
-              ) : (
-                posts.length === 0 ? (
-                  <p>No posts to display.</p>
-                ) : (
-                  posts.map((post) => (
-                    <Card key={post._id}>
-                      <CardContent className="p-4 space-y-4">
-                        { (
-                          <img src={post.file} alt="Post" className="w-full max-h-screen rounded-lg" />
-                        )  
-                          // <video src={post.content} controls className="w-full h-auto rounded-lg" />
-                        }
-                        <p>{post.text}</p>
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center space-x-2">
-                            <Button
-                              variant="ghost"
-                              onClick={() => handleLikePost(post._id)}
-                              className={post.isLiked ? "text-red-500" : ""}
-                            >
-                              <Heart className={`mr-1 h-4 w-4 ${post.isLiked ? "fill-current" : ""}`} />
-                              {post.likes}
-                            </Button>
-                          </div>
-                          <Button variant="outline" onClick={() => handleDeletePost(post._id)}>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                )
-              )}
-            </TabsContent>
-          </Tabs>
+  {loadingPosts ? (
+    <p>Loading...</p>
+  ) : (
+    posts.length === 0 ? (
+      <p>No posts to display.</p>
+    ) : (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {posts.map((post) => (
+          <Card key={post._id} className="w-full flex flex-col">
+            <CardContent className="p-4 space-y-4 flex-grow">
+              <img src={post.file} alt="Post" className="h-80 w-80 object- rounded-lg" />
+              <p className="mt-2 text-sm">{post.text}</p>
+              <hr />
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleLikePost(post._id)}
+                    className={post.isLiked ? "text-red-500" : ""}
+                  >
+                    <Heart className={`mr-1 h-4 w-4 ${post.isLiked ? "fill-current" : ""}`} />
+                    {post.likes}
+                  </Button>
+                </div>
+                <Button variant="outline " className="hover:bg-red-300" onClick={() => handleDeletePost(post._id)}>
+                  <Trash2 className="mr-2 h-4 w-4 hover:text-emerald-600" />
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  )}
+</TabsContent>
+
+
+
+                     </Tabs>
         </div>
       </div>
     </div>
