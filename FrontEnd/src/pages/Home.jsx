@@ -59,7 +59,7 @@ function HomePage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
-          Welcome to EngineerVerse
+          Welcome to Diversify
         </motion.h2>
         <motion.p
           className="text-xl text-gray-300"
