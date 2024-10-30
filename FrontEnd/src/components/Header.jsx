@@ -19,7 +19,7 @@ export default function Header() {
             transition={{ delay: 0.2, duration: 0.5 }}
           >
             <BookOpen />
-            EngineerVerse
+            Diversify
           </motion.h1>
 
           {/* Container for Sign Up and Login buttons */}
