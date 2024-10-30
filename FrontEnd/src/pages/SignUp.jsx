@@ -6,12 +6,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function SignUp() {
-  const [username, setUsername] = useState('')
+  const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Loader state
 
   const navigate = useNavigate();
 
@@ -23,8 +24,10 @@ export default function SignUp() {
       return;
     }
 
+    setLoading(true); // Start loading
+
     try {
-      const response = await axios.post('https://engineers-verse-back.vercel.app/api/v1/users/register', {
+      const response = await axios.post('http://localhost:8000/api/v1/users/register', {
         username,
         fullName,
         email,
@@ -33,10 +36,11 @@ export default function SignUp() {
       console.log(response.data);
       navigate('/login'); // Redirect to login after successful registration
     } catch (err) {
-      // Adjust error handling to display server error messages
       const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
       setError(errorMessage);
       console.error(err);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -60,7 +64,7 @@ export default function SignUp() {
         <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">Sign Up</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
         <form className="space-y-4" onSubmit={handleSubmit}>
-        <input
+          <input
             type="text"
             placeholder="UserName"
             value={username}
@@ -102,9 +106,16 @@ export default function SignUp() {
           />
           <button
             type="submit"
+            disabled={loading} // Disable button when loading
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-md shadow"
           >
-            Sign Up
+            {loading ? (
+              <span className="flex justify-center items-center">
+                <span className="loader mr-2"></span> Processing...
+              </span>
+            ) : (
+              'Sign Up'
+            )}
           </button>
         </form>
 
