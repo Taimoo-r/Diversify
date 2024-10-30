@@ -15,7 +15,7 @@ export default function LandingPage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 1, type: "spring" }}
         >
-          EngineerVerse
+          Diversify
         </motion.h1>
         <motion.p
           className="text-xl mb-12"
