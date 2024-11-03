@@ -20,7 +20,7 @@ export default function SignIn() {
     console.log("Login Request");
 
     try {
-      const response = await axios.post('https://engineers-verse-back-ku0ck7hcj.vercel.app/api/v1/users/login', {
+      const response = await axios.post('https://engineers-verse-back.vercel.app/api/v1/users/login', {
         email,
         password,
       });
