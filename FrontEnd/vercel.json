@@ -1,6 +1,6 @@
 {
   "builds": [
-    { "src": "index.html", "use": "@vercel/static-build" }
+    { "src": "/src/dist/index.html", "use": "@vercel/static-build" }
   ],
   "routes": [
     { "src": "/assets/(.*)", "dest": "/assets/$1" },  
