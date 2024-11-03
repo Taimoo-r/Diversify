@@ -128,7 +128,7 @@ export default function Component() {
     formData.append('resume', resumeFile);
 
     try {
-      const response = await axios.post(`http://localhost:8000/api/v1/users/upload-resume/${localStorage.getItem('_id')}`, formData, {
+      const response = await axios.post(`https://engineers-verse-back.vercel.app/api/v1/users/upload-resume/${localStorage.getItem('_id')}`, formData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'multipart/form-data', // Ensure you set the correct content type
@@ -190,7 +190,7 @@ export default function Component() {
 
   const handleDeletePost = async (postId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/post/${postId}`, {
+      const response = await fetch(`https://engineers-verse-back.vercel.app/api/v1/post/${postId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -247,7 +247,7 @@ export default function Component() {
       const userId = localStorage.getItem('_id')
       const token = localStorage.getItem('accessToken') // assuming token is stored
       setAccessToken(token)
-      const response = await fetch(`http://localhost:8000/api/v1/post/${userId}`, {
+      const response = await fetch(`https://engineers-verse-back.vercel.app/api/v1/post/${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,  // Include JWT token for authentication
@@ -294,7 +294,7 @@ export default function Component() {
 
         // Await the profile update response
         const profileResponse = await axios.post(
-            `http://localhost:8000/api/v1/users/update-profile/${localStorage.getItem('_id')}`, 
+            `https://engineers-verse-back.vercel.app/api/v1/users/update-profile/${localStorage.getItem('_id')}`, 
             formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
