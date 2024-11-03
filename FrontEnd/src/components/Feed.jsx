@@ -198,7 +198,7 @@ export default function Component() {
       <ScrollArea className="h-[calc(100vh-3.5rem)]">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Welcome back, {userData.fullName}</h2>
+            <h2 className="text-3xl font-bold tracking-tight">Welcome back, <span className='bg-gradient-to-br from-red-300 to-indigo-600 bg-clip-text text-transparent text-4xl font-bold'>{userData.fullName}</span></h2>
           </div>
           <div className="space-y-4">
             <Card>
