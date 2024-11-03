@@ -26,7 +26,7 @@ export default function TypewriterBookLoader() {
         animate={{ rotate: [0, 10, 0] }}
         transition={{ duration: 1, repeat: Infinity }}
       >
-        <BookOpen className="w-16 h-16 text-black-500 mb-4" aria-hidden="true" />
+        <BookOpen className="w-16 h-16 text-white mb-4" aria-hidden="true" />
       </motion.div>
       <div className="h-6 font-mono text-lg">
         {text}
@@ -37,7 +37,7 @@ export default function TypewriterBookLoader() {
           |
         </motion.span>
       </div>
-      <span className="sr-only">Loading</span>
+      <span className="sr-only text-white">Loading</span>
     </div>
   )
 }
