@@ -53,8 +53,11 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
-  		}
-  	}
+  		},
+		padding:{
+			safe:'env(safe-area-inset-bottom)'
+		},
+  	},
   },
   plugins: [require("tailwindcss-animate")],
 }

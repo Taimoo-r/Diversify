@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, MessageCircle, Users, FileCode,  Briefcase,Handshake  } from 'lucide-react'

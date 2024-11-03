@@ -310,22 +310,22 @@ export default function Component() {
                           //   <video src={post.media.url} controls className="mt-4 rounded-lg max-h-96 w-full" />
                           // )
                         )}
-                        <div className="flex items-center mt-4 space-x-4">
+                        <div className="flex flex-row items-center mt-4 ">
                           <Button 
                             variant="ghost" 
                             size="sm" 
                             onClick={() => handleLike(post.id)}
                             className={post.isLiked ? "text-purple-500" : ""}
                           >
-                            <ThumbsUp className="mr-2 h-4 w-4" />
+                            <ThumbsUp className="h-4 w-4" />
                             {post.likes.length}
                           </Button>
                           <Button variant="ghost" size="sm">
-                            <MessageCircle className="mr-2 h-4 w-4" />
+                            <MessageCircle className=" h-4 w-4" />
                             {post.comments.length}
                           </Button>
                           <Button variant="ghost" size="sm" onClick={() => handleShare(post.id)}>
-                            <Share2 className="mr-2 h-4 w-4" />
+                            <Share2 className=" h-4 w-4" />
                             Share
                           </Button>
                         </div>

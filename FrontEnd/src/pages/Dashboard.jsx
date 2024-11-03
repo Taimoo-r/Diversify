@@ -22,6 +22,8 @@ import { Bell, BookOpen, Briefcase, Code, Home, LogOut, MessageSquare, Search, S
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
+
 export default function EnhancedEngineerSocialPlatform() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -143,23 +145,25 @@ export default function EnhancedEngineerSocialPlatform() {
       {/* Navigation Bar */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
-          <div className="mr-4 hidden md:flex">
+          <div className="mr-4  md:flex">
             <a className="mr-6 flex items-center space-x-2" href="#">
               <BookOpen className="h-6 w-6 ml-5" />
-              <span className="hidden  sm:inline-block px-2 font-extrabold ">Diversify</span>
+              <span className="sm:inline-block px-2 font-extrabold ">Diversify</span>
             </a>
+            <div className='hidden lg:flex '>
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link className="transition-colors hover:text-foreground/80 text-foreground" to="#">Feed</Link>
               <Link className="transition-colors hover:text-foreground/80 text-foreground/60" to="/projects">Projects</Link>
               <Link className="transition-colors hover:text-foreground/80 text-foreground/60" to="/communities">Communities</Link>
               <Link className="transition-colors hover:text-foreground/80 text-foreground/60" to="/jobs">Jobs</Link>
             </nav>
+            </div>
           </div>
           <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
             <div className="w-full flex-1 md:w-auto md:flex-none">
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search engineers, projects..." className="pl-8" type="search" />
+              <div className="relative hidden md:block">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground " />
+                <Input placeholder="Search engineers, projects..." className="pl-8 md:pl-8 lg:pl-10 xl:pl-12" type="search" />
               </div>
             </div>
             <nav className="flex items-center">
@@ -361,6 +365,31 @@ export default function EnhancedEngineerSocialPlatform() {
           </div>
         </div>
       </footer>
+<nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t lg:hidden">
+  <div className="flex justify-around items-center h-16">
+    <Link to="/dashboard" className="flex flex-col items-center justify-center">
+      <Home className="h-6 w-6" />
+      <span className="text-xs mt-1">Feed</span>
+    </Link>
+    <Link to="/search" className="flex flex-col items-center justify-center">
+      <Search className="h-6 w-6" />
+      <span className="text-xs mt-1">Search</span>
+    </Link>
+    <Link to="/communities" className="flex flex-col items-center justify-center">
+      <Users className="h-6 w-6" />
+      <span className="text-xs mt-1">Community</span>
+    </Link>
+    <Link to="/chat" className="flex flex-col items-center justify-center">
+      <MessageSquare className="h-6 w-6" />
+      <span className="text-xs mt-1">Messages</span>
+    </Link>
+    <Link to="/jobs" className="flex flex-col items-center justify-center">
+      <Briefcase className="h-6 w-6" />
+      <span className="text-xs mt-1">Jobs</span>
+    </Link>
+  </div>
+</nav>
+      
     </div>
   );
 }
