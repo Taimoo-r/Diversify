@@ -17,6 +17,7 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Start loading
+    console.log("Login Request");
 
     try {
       const response = await axios.post('https://engineers-verse-back/api/v1/users/login', {
