@@ -31,6 +31,7 @@ export default function EnhancedEngineerSocialPlatform() {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
   const { userData } = useUserContext();
+  
 
   // Fetch User Data
   useEffect(() => {
@@ -367,7 +368,7 @@ export default function EnhancedEngineerSocialPlatform() {
       </footer>
 <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t lg:hidden">
   <div className="flex justify-around items-center h-16">
-    <Link to="/dashboard" className="flex flex-col items-center justify-center">
+    <Link to={`/dashboard/${localStorage.getItem('_id')}`}>
       <Home className="h-6 w-6" />
       <span className="text-xs mt-1">Feed</span>
     </Link>
