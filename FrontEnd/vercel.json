@@ -3,7 +3,6 @@
     { "src": "index.html", "use": "@vercel/static-build" }
   ],
   "routes": [
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },  // Serve assets directly
-    { "src": "/(.*)", "dest": "/index.html" }          // Fallback to index.html for all other routes
-  ]
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },  
+    { "src": "/(.*)", "dest": "/index.html" }          
 }
