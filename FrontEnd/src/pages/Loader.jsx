@@ -21,7 +21,7 @@ export default function TypewriterBookLoader() {
   }, [])
 
   return (
-    <div className="min-h-screen min-w-full flex flex-col items-center justify-center w-96 h-64 bg-gradient-to-br from-purple-700 to-indigo-400">
+    <div className="min-h-screen min-w-full flex flex-col items-center justify-center w-96 h-64 bg-gradient-to-br from-purple-300 to-indigo-400">
       <motion.div
         animate={{ rotate: [0, 10, 0] }}
         transition={{ duration: 1, repeat: Infinity }}
