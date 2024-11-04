@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Search, Filter, SortDesc, Bookmark, MapPin, DollarSign, Briefcase, Calendar, Users, TrendingUp } from 'lucide-react'
+import BottomNav from '../components/BottomNav'
 
 export default function JobsSection() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -28,6 +29,7 @@ export default function JobsSection() {
   )
 
   return (
+    <>
     <div className="space-y-6 p-6 bg-gradient-to-br from-purple-50 to-indigo-100 min-h-screen">
       <div className="flex items-center space-x-4">
         <div className="relative flex-grow">
@@ -172,6 +174,9 @@ export default function JobsSection() {
           </DialogContent>
         </Dialog>
       )}
+      
     </div>
+    <BottomNav/>
+    </>
   )
 }

@@ -21,6 +21,7 @@ import {
 import { Bell, BookOpen, Briefcase, Code, Home, LogOut, MessageSquare, Search, Settings, User, Users } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import BottomNav from '../components/BottomNav';
 
 
 
@@ -366,30 +367,8 @@ export default function EnhancedEngineerSocialPlatform() {
           </div>
         </div>
       </footer>
-<nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t lg:hidden">
-  <div className="flex justify-around items-center h-16">
-    <Link to={`/dashboard/${localStorage.getItem('_id')}`}>
-      <Home className="h-6 w-6" />
-      <span className="text-xs mt-1">Feed</span>
-    </Link>
-    <Link to="/search" className="flex flex-col items-center justify-center">
-      <Search className="h-6 w-6" />
-      <span className="text-xs mt-1">Search</span>
-    </Link>
-    <Link to="/communities" className="flex flex-col items-center justify-center">
-      <Users className="h-6 w-6" />
-      <span className="text-xs mt-1">Community</span>
-    </Link>
-    <Link to="/chat" className="flex flex-col items-center justify-center">
-      <MessageSquare className="h-6 w-6" />
-      <span className="text-xs mt-1">Messages</span>
-    </Link>
-    <Link to="/jobs" className="flex flex-col items-center justify-center">
-      <Briefcase className="h-6 w-6" />
-      <span className="text-xs mt-1">Jobs</span>
-    </Link>
-  </div>
-</nav>
+
+<BottomNav/>
       
     </div>
   );

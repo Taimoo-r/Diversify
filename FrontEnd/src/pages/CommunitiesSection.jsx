@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Search, Plus, Users, TrendingUp, MessageSquare, Calendar, Globe, Lock } from 'lucide-react'
+import BottomNav from '../components/BottomNav'
 
 export default function CommunitiesSection() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -28,6 +29,7 @@ export default function CommunitiesSection() {
   )
 
   return (
+    <>
     <div className="space-y-6 p-6 bg-gradient-to-br from-purple-50 to-indigo-100 min-h-screen">
       <div className="flex items-center space-x-4">
         <div className="relative flex-grow">
@@ -175,5 +177,7 @@ export default function CommunitiesSection() {
         </Dialog>
       )}
     </div>
+    <BottomNav/>
+    </>
   )
 }

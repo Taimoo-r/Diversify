@@ -11,6 +11,8 @@ import CommunitiesSection from "./pages/CommunitiesSection"
 import Projects from "./pages/Projects"
 import UserProfile from './pages/UserProfile'
 import { UserProvider } from "./userContext.jsx"
+import Serach from "./pages/Search"
+import Search from "./pages/Search"
 
 export default function App() {
   return (
@@ -29,6 +31,7 @@ export default function App() {
     <Route path="/communities" element={<CommunitiesSection/>}/>
     <Route path="/projects" element={<Projects/>}/>
     <Route path="/profile/:userId" element={<UserProfile/>}/>
+    <Route path="/search" element={<Search/>}/>
   </Routes>
     </UserProvider>
   </BrowserRouter>
