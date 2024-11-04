@@ -68,7 +68,7 @@ export default function EnhancedEngineerSocialPlatform() {
     };
 
     fetchUserData();
-  }, [navigate]);
+  }, [userData]);
 
   // Fetch All Users
   useEffect(() => {
