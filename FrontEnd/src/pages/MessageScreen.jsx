@@ -93,15 +93,15 @@ export default function MessagingScreen() {
                     <AvatarImage src="/placeholder-avatar.jpg" alt="John Doe" />
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
-                  <h3 className="text-lg font-semibold">John Doe</h3>
+                  <h3 className="text-lg font-semibold">Taimoor Ijaz</h3>
                   <p className="text-sm text-gray-500">Software Engineer</p>
-                  <p className="text-sm text-gray-500">john.doe@example.com</p>
-                  <p className="text-sm text-gray-500">+1 (555) 123-4567</p>
+                  <p className="text-sm text-gray-500">mailme.taimoor@gmail.com</p>
+                  <p className="text-sm text-gray-500">+92 328 4678490</p>
                 </div>
               </PopoverContent>
             </Popover>
             <div>
-              <h2 className="text-lg font-semibold">John Doe</h2>
+              <h2 className="text-lg font-semibold">Taimoor Ijaz</h2>
               <p className="text-sm text-green-500">Online</p>
             </div>
           </div>
