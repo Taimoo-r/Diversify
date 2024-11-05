@@ -303,7 +303,7 @@ export default function Component() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {posts.map((post) => (
+                    {posts?.map((post) => (
                       <Card key={post.id}>
                         <CardHeader>
                           <div className="flex items-center justify-between">
@@ -321,7 +321,7 @@ export default function Component() {
                               </Avatar>
                               <div>
                                 <CardTitle className="text-sm">
-                                  {post.user.fullName}
+                                  {post?.user?.fullName}
                                 </CardTitle>
                                 <p className="text-xs text-muted-foreground">
                                   Posted{" "}
@@ -373,7 +373,7 @@ export default function Component() {
                           </div>
                         </CardHeader>
                         <CardContent>
-                          <p>{post.text}</p>
+                          <p>{post?.text}</p>
                           {post.file && (
                             <img
                               src={post.file}
@@ -406,7 +406,7 @@ export default function Component() {
                             </Button>
                           </div>
                           <div className="mt-4 space-y-2">
-                            {post.comments.map((comment) => (
+                            {post.comments?.map((comment) => (
                               <div
                                 key={comment.id}
                                 className="flex items-start space-x-2"
@@ -599,7 +599,7 @@ export default function Component() {
               {post.file && (
                 <div className="relative aspect-square bg-muted">
                   <img
-                    src={post.file}
+                    src={post?.file}
                     alt="Post content"
                     className="w-full h-full object-cover"
                     onClick={() => handleImageClick(post.file)}
