@@ -175,20 +175,30 @@ export default function Component() {
           </Card>
 
           {/* Skills Section */}
-          <Card>
+         <Card>
             <CardHeader>
               <CardTitle>Skills</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {Data.skills.map((skill, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="font-medium">{skill.name}</span>
-                    <span className="text-muted-foreground">{skill.proficiency}%</span>
-                  </div>
-                  <Progress value={skill.proficiency} className="h-2" />
+            <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {userData.skills.map((skill, index) => (
+                    <div key={index} className="bg-secondary text-secondary-foreground rounded-md px-3 py-1 text-sm font-medium">
+                      {skill.name}
+                    </div>
+                  ))}
                 </div>
-              ))}
+                {isEditing && (
+                  <Button variant="outline" className="w-full mt-4" onClick={() => setIsEditing(false)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Skill
+                  </Button>
+                )}
+        {isEditing && (
+                <Button variant="outline" className="w-full">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Skill
+                </Button>
+              )}
             </CardContent>
           </Card>
 
