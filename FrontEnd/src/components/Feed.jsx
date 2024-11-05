@@ -241,7 +241,7 @@ export default function Component() {
               <h2 className="text-3xl font-bold tracking-tight">
                 Welcome back,{" "}
                 <span className="bg-gradient-to-br from-red-300 to-indigo-600 bg-clip-text text-transparent text-4xl font-bold">
-                  {userData.fullName}
+                  {userData?.fullName}
                 </span>
               </h2>
             </div>
@@ -257,7 +257,7 @@ export default function Component() {
                     onChange={handleNewPostChange}
                     className="mb-4"
                   />
-                  {newPost.media ? (
+                  {newPost?.media ? (
                     <div className="relative mb-4">
                       {newPost.media.type === "image" ? (
                         <img
@@ -376,10 +376,10 @@ export default function Component() {
                           <p>{post?.text}</p>
                           {post.file && (
                             <img
-                              src={post.file}
+                              src={post?.file}
                               alt="Post content"
                               className="mt-4 rounded max-h-96 w-full object-contain cursor-pointer"
-                              onClick={() => handleImageClick(post.file)}
+                              onClick={() => handleImageClick(post?.file)}
                             />
                           )}
                           <div className="flex flex-row items-center mt-4">
@@ -390,7 +390,7 @@ export default function Component() {
                               className={post.isLiked ? "text-purple-500" : ""}
                             >
                               <ThumbsUp className="h-4 w-4" />
-                              {post.likes.length}
+                              {post?.likes.length}
                             </Button>
                             <Button variant="ghost" size="sm">
                               <MessageCircle className="h-4 w-4" />
@@ -413,11 +413,11 @@ export default function Component() {
                               >
                                 <Avatar className="h-6 w-6">
                                   <AvatarImage
-                                    src={`/placeholder.svg?height=24&width=24&text=${comment.user[0]}`}
+                                    src={`/placeholder.svg?height=24&width=24&text=${comment?.user[0]}`}
                                   />
 
                                   <AvatarFallback>
-                                    {comment.user[0]}
+                                    {comment?.user[0]}
                                   </AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1">
@@ -464,7 +464,7 @@ export default function Component() {
             <h2 className="text-3xl font-bold tracking-tight">
               Welcome back,{" "}
               <span className="bg-gradient-to-br from-red-300 to-indigo-600 bg-clip-text text-transparent text-4xl font-bold">
-                {userData.fullName}
+                {userData?.fullName}
               </span>
             </h2>
           </div>
@@ -476,11 +476,11 @@ export default function Component() {
           <CardContent>
             <Textarea
               placeholder="Share your thoughts, ideas, or questions..."
-              value={newPost.content}
+              value={newPost?.content}
               onChange={handleNewPostChange}
               className="mb-4"
             />
-            {newPost.media ? (
+            {newPost?.media ? (
               <div className="relative mb-4">
                 {newPost.media.type === "image" ? (
                   <img
@@ -592,7 +592,7 @@ export default function Component() {
 
               {/* Post content */}
               <div className="px-3 pb-2">
-                <p>{post.text}</p>
+                <p>{post?.text}</p>
               </div>
 
               {/* Post image */}
@@ -602,7 +602,7 @@ export default function Component() {
                     src={post?.file}
                     alt="Post content"
                     className="w-full h-full object-cover"
-                    onClick={() => handleImageClick(post.file)}
+                    onClick={() => handleImageClick(post?.file)}
                   />
                 </div>
               )}
@@ -641,19 +641,19 @@ export default function Component() {
                               >
                                 <Avatar className="h-6 w-6">
                                   <AvatarImage
-                                    src={`/placeholder.svg?height=24&width=24&text=${comment.user[0]}`}
+                                    src={`/placeholder.svg?height=24&width=24&text=${comment?.user[0]}`}
                                   />
 
                                   <AvatarFallback>
-                                    {comment.user[0]}
+                                    {comment?.user[0]}
                                   </AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1">
                                   <p className="text-sm font-medium">
-                                    {comment.user}
+                                    {comment?.user}
                                   </p>
                                   <p className="text-sm text-muted-foreground">
-                                    {comment.content}
+                                    {comment?.content}
                                   </p>
                                 </div>
                               </div>
