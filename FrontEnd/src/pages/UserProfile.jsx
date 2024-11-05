@@ -181,7 +181,7 @@ export default function Component() {
             </CardHeader>
             <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {userData.skills.map((skill, index) => (
+                  {Data?.skills?.map((skill, index) => (
                     <div key={index} className="bg-secondary text-secondary-foreground rounded-md px-3 py-1 text-sm font-medium">
                       {skill.name}
                     </div>
