@@ -14,6 +14,7 @@ export default function Component() {
     const [userData, setUserData] = useState({});
     const { userId } = useParams(); // Get the userId from the URL
     const [posts, setPosts] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
     
     
     
