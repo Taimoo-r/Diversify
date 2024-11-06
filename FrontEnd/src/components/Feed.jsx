@@ -316,7 +316,7 @@ export default function Component() {
                                   }
                                 />
                                 <AvatarFallback>
-                                  {post?.user?.fullName[0]}
+                                  {post?.user?.fullName}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
@@ -422,10 +422,10 @@ export default function Component() {
                                 </Avatar>
                                 <div className="flex-1">
                                   <p className="text-sm font-medium">
-                                    {comment.user}
+                                    {comment?.user}
                                   </p>
                                   <p className="text-sm text-muted-foreground">
-                                    {comment.content}
+                                    {comment?.content}
                                   </p>
                                 </div>
                               </div>
@@ -540,7 +540,7 @@ export default function Component() {
                         `/placeholder.svg?height=32&width=32&text=${post?.user?.fullName}`
                       }
                     />
-                    <AvatarFallback>{post?.user?.fullName[0]}</AvatarFallback>
+                    <AvatarFallback>{post?.user?.fullName}</AvatarFallback>
                   </Avatar>
                   <div>
                     <div className="flex items-center gap-1">
